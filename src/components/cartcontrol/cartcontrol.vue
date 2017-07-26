@@ -1,5 +1,5 @@
 <template lang="html">
-
+  <!--@click.stop.prevent 阻止单击事件冒泡 组织阻止默认事件-->
   <div class="cartcontrol">
     <transition name="fadeRotate">
       <div class="cart-decrease" v-show="food.count>0" @click.stop.prevent="decreaseCart()">
@@ -29,10 +29,22 @@ export default {
       if (!event._constructed) {
         return
       }
+      /**
+       * 通过this.propsName获取props中的属性
+       * this.propsName.name=XXX 可以直接改变父组件响应式数据的内容
+       * */
+      console.log("this.food",this.food)
       if (!this.food.count) {
-        Vue.set(this.food, 'count', 0)
-      }
-      this.food.count++;
+        /**
+         * Vue.set( object, key, value )
+         * 设置对象的属性。如果对象是响应式的，确保属性被创建后也是响应式的，同时触发视图更新。
+         * */
+        Vue.set(this.food, 'count', 0)//设置this.food中的count属性为0
+      }//此时this.food。count已经设为0
+      this.food.count++;//设置this.food中的count加1，
+      /**
+       * this.$root 当前组件树的根 Vue 实例。如果当前实例没有父实例，此实例将会是其自已。
+       * */
       this.$root.eventHub.$emit('cart.add', event.target)
     },
     decreaseCart() {
@@ -46,7 +58,7 @@ export default {
 
 </script>
 
-<style lang="stylus">
+<style lang="stylus" rel="stylesheet/stylus" >
 
 .cartcontrol
   .cart-decrease

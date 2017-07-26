@@ -97,10 +97,16 @@ export default {
     }
   },
   created() {
+    /**
+     * 定义cart.add事件
+     * */
     this.$root.eventHub.$on('cart.add', this.drop)
   },
   computed: {
     showBackdrop() {
+      /**
+       * 在computed中可以通过this.totalPrice
+       * */
       if (this.listShow && this.totalPrice) {
         return true
       }
@@ -148,6 +154,7 @@ export default {
           ball.show = true
           ball.el = el
           this.dropBalls.push(ball)
+          console.log("this.dropBalls",this.dropBalls)
           return
         }
       }
@@ -175,6 +182,9 @@ export default {
           if (!this.foodlistScroll) {
             this._initScroll()
           } else {
+            /**
+             * 刷新BScroll实例
+             * */
             this.foodlistScroll.refresh()
           }
         })
@@ -223,7 +233,7 @@ export default {
 
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus" scoped rel="stylesheet/stylus">
 .shopCart
   position fixed
   left 0

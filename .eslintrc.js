@@ -5,7 +5,7 @@ module.exports = {
     sourceType: 'module'
   },
   // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
-  extends: 'standard',
+  extends: 'eslint:recommended',
   // required to lint *.vue files
   plugins: [
     'html'
@@ -24,6 +24,7 @@ module.exports = {
       maxBOF: 2
     }],
     'space-before-function-paren':0,
+    'no-console': 'off',
     'semi':0,
     'no-new':0,
     'no-unused-vars':0,

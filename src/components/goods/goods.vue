@@ -1,8 +1,9 @@
 <template lang="html">
-
+  <!--访问原生 DOM 事件。可以用特殊变量 $event 把它传入方法-->
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
       <ul>
+        <!--$event vue中的事件对象-->
         <li v-for="(item,index) in goods" @click="menuClick(index,$event)" :class="index==menuCurrentIndex?'menu-item-selected':'menu-item'">
           <span class="text">
             <iconMap v-show="item.type>0" :iconType="item.type"></iconMap>
@@ -48,6 +49,10 @@
 
 <script>
 import iconMap from 'components/iconMap/iconMap'
+/**
+ * better-scroll
+ * https://github.com/ustbhuangyi/better-scroll
+ * */
 import BScroll from 'better-scroll'
 import shopCart from 'components/shopCart/shopCart'
 import cartcontrol from 'components/cartcontrol/cartcontrol'
@@ -63,8 +68,16 @@ export default {
   },
   created() {
     axios.get('static/data.json').then((res) => {
+      console.log("res.data.goods",res.data.goods)
       this.goods = res.data.goods
+    /**
+     * 你可以在数据改变（this.good=xxx）后，立刻调用 Vue.nextTick(callback)，并把你要做的事情放到回调函数里面。
+     * 当 Vue.nextTick 的回调函数执行时，DOM 将会已经是更新后的状态了。
+     * */
       this.$nextTick(() => {
+        /**
+         * 通过this.MethodName调用methods中的方法
+         * */
         this._initScroll(); // 初始化scroll
         this._calculateHeight(); // 初始化列表高度列表
       })
@@ -79,6 +92,9 @@ export default {
     }
   },
   computed: {
+    /**
+     * computed中的属性可以随着响应式数据data的改变而改变
+     * */
     menuCurrentIndex() {
       for (let i = 0, l = this.listHeight.length; i < l; i++) {
         let topHeight = this.listHeight[i]
@@ -93,16 +109,30 @@ export default {
       let foods = []
       this.goods.forEach((good) => {
         good.foods.forEach((food) => {
+          /**
+           * food.count 在cartcontrol中赋值，因为是响应式数据，所以在这里可以使用
+           * */
+//          console.log("food",food)
           if (food.count) {
             foods.push(food)
           }
         })
       })
+      console.log("selectFoods",foods)
       return foods
     }
   },
   methods: {
+    /**
+     * _initScroll初始化左右两个滚动区域
+     * */
     _initScroll() {
+      /**
+       * better-scroll
+       * new BScroll(ele,options)
+       * options.click :是否启用click事件
+       * 通过this.$refs.RefName 引用html中ref="RefName"定义的DOM节点
+       * */
       this.menuWrapper = new BScroll(this.$refs.menuWrapper, {
         click: true
       });
@@ -110,30 +140,49 @@ export default {
         click: true,
         probeType: 3
       });
-      // 监控滚动事件
-      this.foodsScroll.on('scroll', (pos) => {
+
+      /**
+       * BScroll实例化对象.on('scroll', (pos) => {
+       *    console.log(pos.x + '~' + posx.y)
+       *    ...
+       * })
+       * */
+      this.foodsScroll.on('scroll', (pos) => {//滚动的时候改变foodsScrollY，foodsScrollY的改变会直接改变menuCurrentIndex
         this.foodsScrollY = Math.abs(Math.round(pos.y))
       })
     },
+    /**
+     * _calculateHeight将右边各个food list 距顶部的距离放在一个数据里面
+     * */
     _calculateHeight() {
-      let foodList = this.$refs.foodsWrapper.querySelectorAll('.food-list-hook')
-      let height = 0
-      this.listHeight.push(height)
+      let foodList = this.$refs.foodsWrapper.querySelectorAll('.food-list-hook')//获取右边foods列表
+      let height = 0  //初始高度为0
+      this.listHeight.push(height) //第一个高度为0
       for (let i = 0, l = foodList.length; i < l; i++) {
         let item = foodList[i]
-        height += item.clientHeight
+        height += item.clientHeight //item.clientHeight li的高度，height高度不断叠加
         this.listHeight.push(height)
       }
+      console.log(this.listHeight)
     },
     menuClick(index, event) {
       if (!event._constructed) {
         return
       }
+      /**
+       * BS对象.scrollTo(x, y, time, easing) 滚动到某个位置，x,y 代表坐标，time 表示动画时间，easing 表示缓动函数
+       * */
       this.foodsScroll.scrollTo(0, -this.listHeight[index], 300)
     },
     goDetail(food) {
       this.selectedFood = food
+      /**
+       * this.$nextTick状态改变，立刻执行
+       * */
       this.$nextTick(() => {
+        /**
+         * 通过$refs.appName.method 可以调用子组件的method
+         * */
         this.$refs.myFood.showToggle()
       })
     }
@@ -148,8 +197,9 @@ export default {
 
 </script>
 
-<style lang="stylus">
+<style lang="stylus" rel="stylesheet/stylus" >
 @import '../../common/stylus/mixin'
+
   .goods
     display flex
     position absolute

@@ -1,4 +1,4 @@
-<style lang="stylus" scoped>
+<style lang="stylus" scoped  rel="stylesheet/stylus">
 .ratingsWrapper
   position: absolute
   top: 174px
@@ -169,10 +169,12 @@
       <div class="divider"></div>
       <div class="evaluation">
         <div class="classify">
+          <!--:class="'bad':index==2}" 当index==2条件成立的时候才class才拥有bad-->
           <span v-for="(item,index) in classifyArr" class="item" :class="{'active':item.active,'bad':index==2,'badActive':item.active&&index==2}" @click="filterEvel(item)">
             {{item.name}}<span class="count">{{item.count}}</span>
           </span>
         </div>
+        <!--@click="evelflag=!evelflag"也可以直接写表达式-->
         <div class="switch" @click="evelflag=!evelflag">
           <span class="icon-check_circle" :class="{'on':evelflag}"></span>
           <span class="text">只看有内容的评价</span>
@@ -186,6 +188,7 @@
               <div class="content">
                 <div class="user">
                   <span class="name">{{evel.username}}</span>
+                  <!--evel.rateTime|time 使用自定义的time filter-->
                   <span class="rateTime">{{evel.rateTime | time}}</span>
                 </div>
                 <div class="star-wrapper">
@@ -253,12 +256,15 @@ export default {
           this.scroll.refresh()
         })
       }
-      return selectIndex ? this.ratings.filter((data) => this.evelflag ? data.rateType === selectIndex - 1 && data.text : data.rateType === selectIndex - 1) : this.ratings.filter((data) => this.evelflag ? data.text : true)
+      return selectIndex
+        ? this.ratings.filter((data) => this.evelflag ? data.rateType === selectIndex - 1 && data.text
+        : data.rateType === selectIndex - 1) : this.ratings.filter((data) => this.evelflag ? data.text : true)
     }
   },
   methods: {
     _init() {
       axios.get('static/data.json').then((res) => {
+        console.log( res.data)
         this.ratings = res.data.ratings
         this.seller = res.data.seller
         this._initClassifyArr()
@@ -274,8 +280,9 @@ export default {
         if (index) {
           data.count = this.ratings.filter((temp) => temp.rateType === index - 1).length
         } else {
-          data.count = this.ratings.length
+          data.count = this.ratings.length//全部
         }
+        console.log("data",data)
       })
     },
     filterEvel(item) {

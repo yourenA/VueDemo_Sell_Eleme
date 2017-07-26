@@ -66,6 +66,7 @@
 </template>
 
 <script>
+  //引入自定义的vue过滤器
 import '../../filter/time.js'
 import BScroll from 'better-scroll'
 import cartcontrol from 'components/cartcontrol/cartcontrol'
@@ -113,6 +114,9 @@ export default {
     }
   },
   methods: {
+    /**
+     * 父组件通过this.$refs.RefName.showToggle()调用这里的方法
+     * */
     showToggle() {
       this.showDetail = !this.showDetail
       if (this.showDetail) {
@@ -127,10 +131,11 @@ export default {
           click: true
         });
       } else {
-        this.detailWrapper.refresh()
+        this.detailWrapper.refresh() //刷新滚动条
       }
     },
     addCart(event) {
+      console.log(event)
       if (!event._constructed) {
         return
       }
@@ -148,7 +153,7 @@ export default {
 
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus" scoped  rel="stylesheet/stylus">
 .detailWrapper
   position fixed
   left 0

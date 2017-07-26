@@ -16,6 +16,7 @@ var proxyTable = config.dev.proxyTable
 
 var app = express()
 
+//自己添加 开始
 // 数据mock
 var appData = require('../static/data.json')
 var seller = appData.seller
@@ -46,7 +47,7 @@ apiRoutes.get('/ratings', function(req, res) {
 })
 
 app.use('/api', apiRoutes)
-
+//自己添加 结束
 var compiler = webpack(webpackConfig)
 
 var devMiddleware = require('webpack-dev-middleware')(compiler, {

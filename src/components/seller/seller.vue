@@ -1,4 +1,4 @@
-<style lang="stylus" scoped>
+<style lang="stylus" scoped  rel="stylesheet/stylus">
 .seller-wrapper
   position absolute
   top 174px
